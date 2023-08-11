@@ -740,7 +740,7 @@ MonoBehaviour:
   moveSpeed: 10
   jumpSpeed: 20
   gravity: 40
-  rotationSpeed: 1000
+  rotationSpeed: 500
   groundMask:
     serializedVersion: 2
     m_Bits: 1

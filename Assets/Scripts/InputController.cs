@@ -20,7 +20,7 @@ public class InputController : MonoBehaviour{
             PC.UpdateMoveVector(Vector2.zero);
             return;
         }
-        Vector2 moveVector = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+        Vector2 moveVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         PC.UpdateMoveVector(moveVector);
         if (Input.GetButtonDown("Jump")){
             PC.Jump();
