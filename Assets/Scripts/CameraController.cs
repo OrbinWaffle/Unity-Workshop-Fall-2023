@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] Vector3 offset = Vector3.zero;
     [SerializeField] float smoothTime = 0f;
     [SerializeField] float distance;
     [SerializeField] Transform targetObj;
@@ -17,16 +18,9 @@ public class CameraController : MonoBehaviour
     Vector3 root;
 
     Vector3 velocity;
-    // Start is called before the first frame update
-    void Start()
+    void Update()
     {
-        
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        root = Vector3.SmoothDamp(root, targetObj.position, ref velocity, smoothTime);
+        root = Vector3.SmoothDamp(root, targetObj.position + offset, ref velocity, smoothTime);
         transform.position = root + -transform.forward * distance;
     }
 }

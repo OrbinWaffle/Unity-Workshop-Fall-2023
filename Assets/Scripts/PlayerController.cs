@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour{
     [SerializeField] float jumpSpeed = 1f;
     [SerializeField] float gravity = 9.81f;
     [SerializeField] float rotationSpeed = 100f;
+    [SerializeField] float groundCheckDistance = 0.01f;
     [SerializeField] LayerMask groundMask;
     float groundCheckDelay = 0.1f;
     Vector2 moveVector;
@@ -19,16 +20,14 @@ public class PlayerController : MonoBehaviour{
     float verticalVelocity = 0f;
     float nextGroundCheckTime = 0f;
 
+    Vector3 spawnPos;
+
     // Start is called before the first frame update
 
     void Start(){
         CC = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
-    }
-
-    // Update is called once per frame
-    void Update(){
-        UpdateAnimations();
+        spawnPos = transform.position;
     }
 
     void UpdateAnimations(){
@@ -36,23 +35,36 @@ public class PlayerController : MonoBehaviour{
         anim.SetFloat("verticalVelocity", verticalVelocity/jumpSpeed);
         anim.SetBool("isGrounded", isGrounded);
     }
-    void FixedUpdate()
+    void OnDrawGizmosSelected()
     {
-        if(Time.time > nextGroundCheckTime)
+        if(Application.isPlaying)
         {
-            isGrounded = Physics.CheckBox(transform.position, new Vector3(CC.radius, .1f, CC.radius), Quaternion.identity, groundMask);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(transform.position + (CC.center + transform.up * -CC.height/2) + (transform.up * CC.radius), CC.radius);
+        }
+    }
+    void Update()
+    {
+        UpdateAnimations();
+        MovementHandler();
+    }
+    public void MovementHandler()
+    {
+        if(Time.time > nextGroundCheckTime && verticalVelocity <= 0)
+        {
+            isGrounded = Physics.CheckSphere(transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)), CC.radius, groundMask, QueryTriggerInteraction.Ignore);
         }
 
         if(isGrounded && Time.time > nextGroundCheckTime){
             verticalVelocity = 0f;
         }
         else{
-            verticalVelocity -= gravity * Time.fixedDeltaTime;
+            verticalVelocity -= gravity * Time.deltaTime;
         }
 
         CC.Move(
-            new Vector3(moveVector.x, 0, moveVector.y) * moveSpeed * Time.fixedDeltaTime
-            + Vector3.up * verticalVelocity * Time.fixedDeltaTime
+            new Vector3(moveVector.x, 0, moveVector.y) * moveSpeed * Time.deltaTime
+            + Vector3.up * verticalVelocity * Time.deltaTime
         );
     }
     public void UpdateMoveVector(Vector2 newVec){
@@ -72,7 +84,17 @@ public class PlayerController : MonoBehaviour{
         {
             return;
         }
+        isGrounded = false;
         nextGroundCheckTime = Time.time + groundCheckDelay;
         verticalVelocity = jumpSpeed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("KillZone"))
+        {
+            transform.position = spawnPos;
+            Physics.SyncTransforms();
+        }
     }
 }
