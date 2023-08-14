@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour{
     bool isGrounded;
     float verticalVelocity = 0f;
     float nextGroundCheckTime = 0f;
+    public bool freeze;
 
     Vector3 spawnPos;
 
@@ -45,8 +46,13 @@ public class PlayerController : MonoBehaviour{
     }
     void Update()
     {
+        if(freeze)
+        {
+            return;
+        }
         UpdateAnimations();
         MovementHandler();
+        RotationHandler();
     }
     public void MovementHandler()
     {
@@ -67,12 +73,14 @@ public class PlayerController : MonoBehaviour{
             + Vector3.up * verticalVelocity * Time.deltaTime
         );
     }
-    public void UpdateMoveVector(Vector2 newVec){
-        moveVector = newVec;
-
-        if(newVec != Vector2.zero){
+    public void RotationHandler()
+    {
+        if(moveVector != Vector2.zero){
             RotatePlayer(new Vector3(moveVector.x, 0, moveVector.y));
         }
+    }
+    public void UpdateMoveVector(Vector2 newVec){
+        moveVector = newVec;
     }
     public void RotatePlayer(Vector3 vectorToRotateTowards){
         Quaternion targetRotation = Quaternion.LookRotation(vectorToRotateTowards, Vector3.up);
@@ -96,5 +104,18 @@ public class PlayerController : MonoBehaviour{
             transform.position = spawnPos;
             Physics.SyncTransforms();
         }
+    }
+    public void Freeze(bool doFreeze)
+    {
+        freeze = doFreeze;
+        anim.enabled = !doFreeze;
+    }
+    public void ResetPlayer()
+    {
+        moveVector = Vector3.zero;
+        verticalVelocity = 0;
+        isGrounded = true;
+        anim.Rebind();
+        anim.Update(0);
     }
 }
