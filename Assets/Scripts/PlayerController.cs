@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour{
     [SerializeField] float gravity = 9.81f;
     [SerializeField] float rotationSpeed = 100f;
     [SerializeField] float groundCheckDistance = 0.01f;
+    [SerializeField] float groundCheckRadius = 1f;
     [SerializeField] LayerMask groundMask;
     float groundCheckDelay = 0.1f;
     Vector2 moveVector;
@@ -41,7 +42,7 @@ public class PlayerController : MonoBehaviour{
         if(Application.isPlaying)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(transform.position + (CC.center + transform.up * -CC.height/2) + (transform.up * CC.radius), CC.radius);
+            Gizmos.DrawSphere(transform.position + (CC.center + transform.up * -CC.height/2) + (transform.up * CC.radius) + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius);
         }
     }
     void Update()
@@ -58,7 +59,10 @@ public class PlayerController : MonoBehaviour{
     {
         if(Time.time > nextGroundCheckTime && verticalVelocity <= 0)
         {
-            isGrounded = Physics.CheckSphere(transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)), CC.radius, groundMask, QueryTriggerInteraction.Ignore);
+            isGrounded = Physics.CheckSphere
+            (
+                transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)) 
+                + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
         }
 
         if(isGrounded && Time.time > nextGroundCheckTime){

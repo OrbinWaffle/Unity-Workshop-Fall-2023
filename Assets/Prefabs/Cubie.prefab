@@ -65,9 +65,11 @@ MonoBehaviour:
   gravity: 40
   rotationSpeed: 500
   groundCheckDistance: 0.1
+  groundCheckRadius: 1
   groundMask:
     serializedVersion: 2
     m_Bits: 1
+  freeze: 0
 --- !u!143 &2361570590746577097
 CharacterController:
   m_ObjectHideFlags: 0
