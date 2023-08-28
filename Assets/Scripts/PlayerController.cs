@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
+[ExecuteAlways]
 public class PlayerController : MonoBehaviour{
     [SerializeField] float moveSpeed = 0.25f;
     [SerializeField] float jumpSpeed = 1f;
@@ -52,19 +52,12 @@ public class PlayerController : MonoBehaviour{
             return;
         }
         UpdateAnimations();
+        GroundCheck();
         MovementHandler();
         RotationHandler();
     }
     public void MovementHandler()
     {
-        if(Time.time > nextGroundCheckTime && verticalVelocity <= 0)
-        {
-            isGrounded = Physics.CheckSphere
-            (
-                transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)) 
-                + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
-        }
-
         if(isGrounded && Time.time > nextGroundCheckTime){
             verticalVelocity = 0f;
         }
@@ -76,6 +69,16 @@ public class PlayerController : MonoBehaviour{
             new Vector3(moveVector.x, 0, moveVector.y) * moveSpeed * Time.deltaTime
             + Vector3.up * verticalVelocity * Time.deltaTime
         );
+    }
+    void GroundCheck()
+    {
+        if(Time.time > nextGroundCheckTime && verticalVelocity <= 0)
+        {
+            isGrounded = Physics.CheckSphere
+            (
+                transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)) 
+                + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
+        }
     }
     public void RotationHandler()
     {
