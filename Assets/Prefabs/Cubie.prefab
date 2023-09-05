@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7396275665514185642}
   - component: {fileID: 2361570590746577097}
   - component: {fileID: 7916505714723864963}
+  - component: {fileID: 8010807856626411782}
   m_Layer: 6
   m_Name: Cubie
   m_TagString: Player
@@ -69,6 +70,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 1
+  isGrounded: 0
   freeze: 0
 --- !u!143 &2361570590746577097
 CharacterController:
@@ -117,6 +119,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!208 &8010807856626411782
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10421281757434150}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &279822988454445811
 GameObject:
   m_ObjectHideFlags: 0

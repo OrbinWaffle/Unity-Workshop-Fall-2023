@@ -4,7 +4,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
-[ExecuteAlways]
 public class PlayerController : MonoBehaviour{
     [SerializeField] float moveSpeed = 0.25f;
     [SerializeField] float jumpSpeed = 1f;
@@ -17,7 +16,7 @@ public class PlayerController : MonoBehaviour{
     Vector2 moveVector;
     CharacterController CC;
     Animator anim;
-    bool isGrounded;
+    public bool isGrounded;
     float verticalVelocity = 0f;
     float nextGroundCheckTime = 0f;
     public bool freeze;
@@ -33,7 +32,7 @@ public class PlayerController : MonoBehaviour{
     }
 
     void UpdateAnimations(){
-        anim.SetFloat("absMoveSpeed", moveVector.magnitude);
+        anim.SetFloat("moveSpeed", moveVector.magnitude * (moveSpeed / 10), 0.05f, Time.deltaTime);
         anim.SetFloat("verticalVelocity", verticalVelocity/jumpSpeed);
         anim.SetBool("isGrounded", isGrounded);
     }
@@ -77,7 +76,8 @@ public class PlayerController : MonoBehaviour{
             isGrounded = Physics.CheckSphere
             (
                 transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)) 
-                + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
+                + (transform.up * (groundCheckRadius-1)), CC.radius * groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore
+            );
         }
     }
     public void RotationHandler()
