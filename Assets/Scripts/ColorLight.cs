@@ -17,7 +17,6 @@ public class ColorLight : MonoBehaviour
         m_lights = GetComponentsInChildren<Light>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         curProgress += Time.deltaTime * (1/interval);

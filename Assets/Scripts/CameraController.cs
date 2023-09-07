@@ -28,9 +28,11 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
+        // find position of focused object, then create target vector which is curDistance units away
         Vector3 root = curTarget.position + offset;
         Vector3 target = root + -transform.forward * curDistance;
         
+        // smoothly move to target vector
         transform.position = Vector3.SmoothDamp(transform.position, target, ref posVelocity, smoothTime);
         transform.rotation = Quaternion.Euler(Vector3.SmoothDamp(transform.rotation.eulerAngles, curRotation.eulerAngles, ref rotVelocity, smoothTime));
     }

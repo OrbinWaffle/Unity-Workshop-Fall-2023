@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour{
     float verticalVelocity = 0f;
     float nextGroundCheckTime = 0f;
     public bool freeze;
+    public bool canMove;
 
     Vector3 spawnPos;
 
@@ -33,6 +34,7 @@ public class PlayerController : MonoBehaviour{
 
     void UpdateAnimations(){
         anim.SetFloat("moveSpeed", moveVector.magnitude * (moveSpeed / 10), 0.05f, Time.deltaTime);
+        anim.SetFloat("animSpeedMult", 1 + moveVector.magnitude * ((moveSpeed / 10) - 1));
         anim.SetFloat("verticalVelocity", verticalVelocity/jumpSpeed);
         anim.SetBool("isGrounded", isGrounded);
     }
@@ -57,13 +59,15 @@ public class PlayerController : MonoBehaviour{
     }
     public void MovementHandler()
     {
+        // if we're grounded and it has been some time since we jumped, set vertical velocity to zero
         if(isGrounded && Time.time > nextGroundCheckTime){
             verticalVelocity = 0f;
         }
+        // otherwise, make us fall
         else{
             verticalVelocity -= gravity * Time.deltaTime;
         }
-
+        // move character controller based on vertical velocity and movement vector
         CC.Move(
             new Vector3(moveVector.x, 0, moveVector.y) * moveSpeed * Time.deltaTime
             + Vector3.up * verticalVelocity * Time.deltaTime
@@ -71,8 +75,10 @@ public class PlayerController : MonoBehaviour{
     }
     void GroundCheck()
     {
+        // if its been some time since we jumped and we're not going up
         if(Time.time > nextGroundCheckTime && verticalVelocity <= 0)
         {
+            // create a sphere at the player's feet and check for ground
             isGrounded = Physics.CheckSphere
             (
                 transform.position + (CC.center + transform.up * (-CC.height/2 + CC.radius - groundCheckDistance)) 
@@ -82,19 +88,24 @@ public class PlayerController : MonoBehaviour{
     }
     public void RotationHandler()
     {
-        if(moveVector != Vector2.zero){
+        if(moveVector != Vector2.zero)
+        {
             RotatePlayer(new Vector3(moveVector.x, 0, moveVector.y));
         }
     }
-    public void UpdateMoveVector(Vector2 newVec){
+    public void UpdateMoveVector(Vector2 newVec)
+    {
         moveVector = newVec;
     }
-    public void RotatePlayer(Vector3 vectorToRotateTowards){
+    public void RotatePlayer(Vector3 vectorToRotateTowards)
+    {
         Quaternion targetRotation = Quaternion.LookRotation(vectorToRotateTowards, Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
-    public void Jump(){
+    public void Jump()
+    {
+        // if we're not already in the air, set vertical velocity
         if(!isGrounded)
         {
             return;
@@ -106,6 +117,7 @@ public class PlayerController : MonoBehaviour{
 
     private void OnTriggerEnter(Collider other)
     {
+        // reset position
         if(other.CompareTag("KillZone"))
         {
             transform.position = spawnPos;
